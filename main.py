@@ -8,8 +8,13 @@ from sympy import Piecewise
 from sympy.testing.pytest import ignore_warnings
 
 ### create cubic spline polynomial ###
+### this makes the point stock market graph "curvy" so we can take the derivatives of the graph##
+### it works by making each point to point a polynomial that connects the points smoothly ###
+### this portion finds all the coefficients of each polynomial such a the a, b, c, and d values in aX^3 + bx^2 + cx + d ###
+
 def natural_cubic_spline(datax, datay):
    ### find coefficients ###
+   
    n = len(datax)
    a = datay
    h = np.zeros(n)
@@ -43,7 +48,11 @@ def natural_cubic_spline(datax, datay):
    Q[1] = b
    Q[2] = c
    Q[3] = d
+   
    ### create polynomials ###
+   ### Now with the coefficents we create the polynomials for each section of the graph ###
+   ### we save this as an mutable array as we need the internal part to be modified after being created so we can add any number of stock market points##
+   ### it must be saved in an array as the polynomial is too complex to held as an int or string since we will be using the polynomials as functions ###
    x = sp.Symbol('x')
    Sfunc = sp.MutableDenseNDimArray.zeros(n-1, 1)
    S = 0
@@ -56,7 +65,8 @@ def natural_cubic_spline(datax, datay):
    return Sfunc
 
 
-### find derivative and derivative values of cubic spline polynomial ###
+# find derivative and derivative values of cubic spline polynomial#
+
 def getderivative(func):
     x = sp.Symbol('x')
     n = len(func)
@@ -68,7 +78,8 @@ def getderivative(func):
     return fpvals
 
 
-### find second derivative and second derivative values of cubic spline polynomial ###
+# find second derivative and second derivative values of cubic spline polynomial #
+
 def getsndderivative(funcp):
     x = sp.Symbol('x')
     n = len(funcp)
@@ -80,7 +91,9 @@ def getsndderivative(funcp):
     return fpvals
 
 
-### sum derivative values (positive and negative) and occurances ###
+# sum derivative values (positive and negative) and occurances #
+# this would show how much a graph is trending down or up over the whole graph #
+
 def derivativesums(vals):
     n = len(vals)
     sums = np.zeros((2, 2))
@@ -93,6 +106,7 @@ def derivativesums(vals):
             sums[1][1] += 1
     return sums
 
+# some data I wanted to be aded onto the graph #
 
 def derivativeavg(vals):
     avg = np.zeros(2)
@@ -100,6 +114,7 @@ def derivativeavg(vals):
     avg[1] = vals[1][0]/vals[1][1]
     return avg
 
+# used to great the bounds of the graph #
 
 def findbounds(points, values):
     n = len(values)
@@ -110,6 +125,11 @@ def findbounds(points, values):
         elif bound[1] < values[i]:
             bound[1] = values[i]
     return bound
+
+# I wanted to see if I could find a trend for when one should "buy" and "sell" #
+# If the graph is going down and it's concave down then we will be approaching a minimum meaning you would want to "buy" and vice versa for "sell" #
+# I wanted to mark that by a green 1 and red -1 #
+# The info could not conclusively predict any trends #
 
 def ones(fpvals, fp2vals):
     n = len(fpvals)
