@@ -6,7 +6,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-# import stock market data and define variables
+# import stock market data and define variables #
+# google sheets has a function that can pull open or close data points from the stock market of various stocks #
+# I could not do a true analyst of a single day unless I manually entered each point # 
+# this allowed me to use multiple datasets and even an outlier like GME doing the "To the Moon" period back in   2021 #
+
 SHEET_ID = '1kTy1Vb76VPPWFaXgapaCtRvHezLtysXmEgfKkbz8_gk'
 SHEET_NAME = 'Sheet1'
 url = f'https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv&sheet={SHEET_NAME}'
@@ -18,12 +22,16 @@ xvals = np.zeros(n)
 xax = np.zeros(n-1)
 xvalsprime = np.zeros(n - 1)
 
+# provides the range for the graph #
+
 for i in range(n):
     t = i
     xvals[i] = t
     fxvals[i] = b[i]
     if i != 0:
         xvalsprime[i-1] = t - .5
+
+# calls all my functions from main # 
 
 x = sp.Symbol('x')
 sfunc = main.natural_cubic_spline(xvals, fxvals)
@@ -34,7 +42,10 @@ avg = main.derivativeavg(sums)
 print(avg)
 bound1 = main.findbounds(xvals, fp2vals)
 bound2 = main.findbounds(xvals, fxvals)
-derdata = main.ones(fpvals, fp2vals)
+derdata = main.ones(fpvals, fp2vals
+
+# This is the code for the layout of the graph to show all the data #
+                    
 fig, axs = plt.subplots(2, sharex=True)
 plt.xlabel('Days')
 plt.ylabel('Values')
